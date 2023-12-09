@@ -1,4 +1,5 @@
 <template>
+  <br><br><br><br>
   <div>
     <div class="container mt-1">
       <h1 class="feedback-header">Feedback</h1>
@@ -39,6 +40,7 @@ export default {
 </script>
 
 <style scoped>
+@import '../assets/styles.css';
 h1.feedback-header {
   font-family: 'Poppins';
   font-size: 48px;

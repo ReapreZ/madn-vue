@@ -18,6 +18,7 @@
   </template>
   
   <style scoped>
+  @import '../assets/styles.css';
   img {
       max-width: 100%;
       height: auto;

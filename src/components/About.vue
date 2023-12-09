@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-      <div class="row align-items-center">
-        <br><br><br><br><br>
+      <div class="row align-items-center" style="min-height: 65vh;">
+        
   
         <p>
           <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
@@ -36,6 +36,7 @@
   </script>
   
   <style scoped>
+  @import '../assets/styles.css';
   h1.about-header {
     font-family: 'Poppins';
     font-size: 48px;
@@ -44,7 +45,7 @@
   }
   
   p.about {
-    display: flex;
+    display:flex;
     justify-content: center;
     align-items: center;
     text-align: center;

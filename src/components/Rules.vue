@@ -20,12 +20,13 @@
   </script>
   
   <style scoped>
+  @import '../assets/styles.css';
   .center-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 85vh;
     margin-top: -10vh;
   }
   

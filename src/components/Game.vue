@@ -821,6 +821,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <style>
+@import '../assets/styles.css';
 #game-board {
     display: grid;
     grid-template-columns: repeat(11, 40px);
