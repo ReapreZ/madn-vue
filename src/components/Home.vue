@@ -9,7 +9,7 @@
       <div class="madn-image">
         <br>
         <br>
-          <img src="../assets/madnimage.png" alt="MADN" width="600" height="200">
+          <img src="../assets/images/madnimage.png" alt="MADN" width="600" height="200">
       </div>
       </form>
       </div>
