@@ -551,9 +551,40 @@ methods: {
   },
 
   createGameBoard() {
-    const rowsData = [
-      // ... (deine vorhandenen Daten)
-    ];
+    const rowsData = [[
+                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'goalp1'},{ className: 'tile' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },
+            ],
+            [
+                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },
+            ],
+            [
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
+            ],
+            [
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
+            ],
+            [
+                { className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp3' },
+            ],
+            [
+                { className: 'tile' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'tile' },
+            ],
+            [
+                { className: 'goalp2' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },
+            ],
+            [
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
+            ],
+            [
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
+            ],
+            [
+                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },
+            ],
+            [
+                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },
+            ],
+        ];
     rowsData.forEach((rowData, rowIndex) => {
       this.gameBoard.appendChild(this.createRow(rowData, rowIndex));
     });
@@ -561,7 +592,7 @@ methods: {
 
   async getPlayerTurnFromBackend() {
     return $.ajax({
-      url: API_BASE_URL + '/getPlayerturn',
+      url: this.API_BASE_URL + '/getPlayerturn',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -575,7 +606,7 @@ methods: {
 
   async getRolledDiceFromBackend() {
     $.ajax({
-      url: API_BASE_URL + '/getRolledDice',
+      url: this.API_BASE_URL + '/getRolledDice',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -589,7 +620,7 @@ methods: {
 
   async getPlayeramountFromBackend() {
     $.ajax({
-      url: API_BASE_URL + '/getPlayerAmount',
+      url: this.API_BASE_URL + '/getPlayerAmount',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -603,7 +634,7 @@ methods: {
 
   async getTimesPlayerRolledFromBackend() {
     $.ajax({
-      url: API_BASE_URL + '/getTimesPlayerRolled',
+      url: this.API_BASE_URL + '/getTimesPlayerRolled',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -617,7 +648,7 @@ methods: {
 
   async getPiecesOutFromBackend() {
     $.ajax({
-      url: API_BASE_URL + '/getPiecesOut',
+      url: this.API_BASE_URL + '/getPiecesOut',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -634,7 +665,7 @@ methods: {
 
   async getPiecesListFromBackend() {
     $.ajax({
-      url: API_BASE_URL + '/getPiecesList',
+      url: this.API_BASE_URL + '/getPiecesList',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -668,7 +699,7 @@ methods: {
   async setRolledDiceInBackend(rolledDiceBackend) {
     $.ajax({
       type: "POST",
-      url: API_BASE_URL + "/setRolledDice",
+      url: this.API_BASE_URL + "/setRolledDice",
       contentType: "application/json",
       data: JSON.stringify({ rolledDiceBackend }),
       success: function (response) {
@@ -771,6 +802,7 @@ mounted() {
   }
 
   this.openPopup();
+  this.initializeGame();
 },
 };
 </script>
