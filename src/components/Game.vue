@@ -71,7 +71,7 @@ export default {
         rolledDice: 0,
         playeramount: 0,
         timesPlayerRolled: 0,
-        API_BASE_URL: "http://localhost:5173",
+        API_BASE_URL: "http://localhost:9000",
         gameBoard: '',
         startButton: ''
         };
@@ -596,6 +596,7 @@ methods: {
     try {
         const response = await axios.get('http://localhost:9000/getPlayerturn');
         this.playerturn = response.data;
+        console.log(response.data + " getPlayerturn");
       } catch (error) {
         console.error('Error:', error);
       }
@@ -646,20 +647,24 @@ methods: {
       }
     },
 
-  async setPlayerTurnInBackend(playerturnBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setPlayerturn",
-      contentType: "application/json",
-      data: JSON.stringify({ playerturnBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
-      }
+    async setPlayerTurnInBackend(playerturnBackend) {
+  try {
+    console.log('this.playerturn vor dem Aufruf:', this.playerturn);
+    console.log('playerturnBackend vor dem Aufruf:', playerturnBackend);
+
+    const response = await axios.post('http://localhost:9000/setPlayerturn', {
+      playerturnBackend
     });
-  },
+
+    console.log('this.playerturn nach dem Aufruf:', this.playerturn);
+    console.log('playerturnBackend nach dem Aufruf:', playerturnBackend);
+
+    console.log('Erfolgreich an das Backend gesendet:', response.data);
+  } catch (error) {
+    console.error('Fehler beim Senden an das Backend:', error);
+  }
+},
+
 
   async setRolledDiceInBackend(rolledDiceBackend) {
     $.ajax({
