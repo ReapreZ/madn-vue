@@ -276,11 +276,12 @@ methods: {
 
   async updatePlayerturn() {
     await this.sleep(100);
-    this.playerturn = await this.getPlayerTurnFromBackend();
-
+    await this.getPlayerTurnFromBackend();
+    
     if (this.playerturn === this.playeramount - 1) {
       await this.setPlayerTurnInBackend(0);
     } else {
+      console.log("this.playerturn= " + this.playerturn)
       await this.setPlayerTurnInBackend(this.playerturn + 1);
     }
 
