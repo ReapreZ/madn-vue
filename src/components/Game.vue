@@ -1,4 +1,3 @@
-
 <template>
     <body>
         <br><br><br>
@@ -38,7 +37,7 @@
                     </div>
                 
         
-                    <button type="button" id="startButton" onclick="startGame()">Spiel starten</button>
+                    <button type="button" id="startButton" @click="startGame">Spiel starten</button>
                 </form>
             </div>
         </div>
@@ -72,6 +71,8 @@ export default {
         playeramount: 0,
         timesPlayerRolled: 0,
         API_BASE_URL: "http://localhost:9000",
+        gameBoard: '',
+        startButton: ''
         };
     },
 methods: {
@@ -86,13 +87,14 @@ methods: {
   },
   
   async startGame() {
+    console.log("startgame test")
     this.player1Name = document.getElementById('player1').value;
     this.player2Name = document.getElementById('player2').value;
     this.player3Name = document.getElementById('player3').value;
     this.player4Name = document.getElementById('player4').value;
 
-    const playeramount = this.filledPlayer();
-    await this.setPlayeramountInBackend(playeramount);
+    this.playeramount = this.filledPlayer();
+    await this.setPlayeramountInBackend(this.playeramount);
 
     this.initializeGame();
 
@@ -104,11 +106,11 @@ methods: {
     this.closePopup();
   },
 
-  adjustGameBoard(playeramount) {
-    if (playeramount < 2 || playeramount > 4) {
+  adjustGameBoard() {
+    if (this.playeramount < 2 || this.playeramount > 4) {
       console.error("Ungültige Spieleranzahl. Die Spieleranzahl muss zwischen 2 und 4 Spielern liegen.")
     }
-    const fieldsToDelete = (4 - playeramount) * 4;
+    const fieldsToDelete = (4 - this.playeramount) * 4;
     this.houseList.splice(-fieldsToDelete, fieldsToDelete);
   },
 
@@ -134,9 +136,10 @@ methods: {
     await this.setPlayerTurnInBackend(0);
     await this.setPiecesListInBackend(this.pieceList);
     this.createGameBoard();
+    console.log("tesssst");
     const gameInterface = this.createGameInterface();
     this.gameBoard.parentElement.appendChild(gameInterface);
-    this.adjustGameBoard(this.playeramount);
+    this.adjustGameBoard();
     this.addStartPlayerCircles(this.houseList);
     await this.setTimesPlayerRolledInBackend(0);
   },
@@ -794,15 +797,10 @@ methods: {
 
 },
 mounted() {
-  const gameBoard = document.getElementById('game-board');
-  const startButton = document.getElementById('startButton');
-
-  if (startButton) {
-    startButton.addEventListener('click', this.startGame);
-  }
+   this.gameBoard = document.getElementById('game-board');
+   this.startButton = document.getElementById('startButton');
 
   this.openPopup();
-  this.initializeGame();
 },
 };
 </script>
