@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -70,7 +71,7 @@ export default {
         rolledDice: 0,
         playeramount: 0,
         timesPlayerRolled: 0,
-        API_BASE_URL: "http://localhost:9000",
+        API_BASE_URL: "http://localhost:5173",
         gameBoard: '',
         startButton: ''
         };
@@ -87,7 +88,6 @@ methods: {
   },
   
   async startGame() {
-    console.log("startgame test")
     this.player1Name = document.getElementById('player1').value;
     this.player2Name = document.getElementById('player2').value;
     this.player3Name = document.getElementById('player3').value;
@@ -136,7 +136,6 @@ methods: {
     await this.setPlayerTurnInBackend(0);
     await this.setPiecesListInBackend(this.pieceList);
     this.createGameBoard();
-    console.log("tesssst");
     const gameInterface = this.createGameInterface();
     this.gameBoard.parentElement.appendChild(gameInterface);
     this.adjustGameBoard();
@@ -334,7 +333,7 @@ methods: {
     const dice = document.createElement('div');
     dice.className = 'dice';
     const diceImage = document.createElement('img');
-    diceImage.src = '/assets/images/one.png';
+    diceImage.src = 'src/assets/images/one.png';
     diceImage.className = 'dice-image';
 
     dice.appendChild(diceImage);
@@ -350,7 +349,7 @@ methods: {
     const dice = document.createElement('div');
     dice.className = 'dice';
     const diceImage = document.createElement('img');
-    diceImage.src = '/assets/images/magicDice.png';
+    diceImage.src = 'src/assets/images/magicDice.png';
     diceImage.className = 'dice-image';
 
     dice.appendChild(diceImage);
@@ -414,22 +413,22 @@ methods: {
     this.rolledDice = randomNumber;
     switch (randomNumber) {
       case 1:
-        diceImage.src = '/assets/images/one.png';
+        diceImage.src = 'src/assets/images/one.png';
         break;
       case 2:
-        diceImage.src = '/assets/images/two.png';
+        diceImage.src = 'src/assets/images/two.png';
         break;
       case 3:
-        diceImage.src = '/assets/images/three.png';
+        diceImage.src = 'src/assets/images/three.png';
         break;
       case 4:
-        diceImage.src = '/assets/images/four.png';
+        diceImage.src = 'src/assets/images/four.png';
         break;
       case 5:
-        diceImage.src = '/assets/images/five.png';
+        diceImage.src = 'src/assets/images/five.png';
         break;
       case 6:
-        diceImage.src = '/assets/images/six.png';
+        diceImage.src = 'src/assets/images/six.png';
         break;
       default:
         console.error('Invalid random number.');
@@ -594,95 +593,58 @@ methods: {
   },
 
   async getPlayerTurnFromBackend() {
-    return $.ajax({
-      url: this.API_BASE_URL + '/getPlayerturn',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.playerturn = data;
-      }.bind(this),
-      error: function (error) {
+    try {
+        const response = await axios.get('http://localhost:9000/getPlayerturn');
+        this.playerturn = response.data;
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
   async getRolledDiceFromBackend() {
-    $.ajax({
-      url: this.API_BASE_URL + '/getRolledDice',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.rolledDice = data;
-      }.bind(this),
-      error: function (error) {
+    try {
+        const response = await axios.get('http://localhost:9000/getRolledDice');
+        this.rolledDice = response.data;
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
   async getPlayeramountFromBackend() {
-    $.ajax({
-      url: this.API_BASE_URL + '/getPlayerAmount',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.playeramount = data;
-      }.bind(this),
-      error: function (error) {
+    try {
+        const response = await axios.get('http://localhost:9000/getPlayeramount');
+        this.playeramount = response.data;
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
   async getTimesPlayerRolledFromBackend() {
-    $.ajax({
-      url: this.API_BASE_URL + '/getTimesPlayerRolled',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.timesPlayerRolled = data;
-      }.bind(this),
-      error: function (error) {
+    try {
+        const response = await axios.get('http://localhost:9000/getTimesPlayerRolled');
+        this.timesPlayerRolled = response.data;
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
   async getPiecesOutFromBackend() {
-    $.ajax({
-      url: this.API_BASE_URL + '/getPiecesOut',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.piecesOut.forEach(function (element, index) {
-          console.log(index + "   " + element);
-        });
-        this.piecesOut = data;
-      }.bind(this),
-      error: function (error) {
+    try {
+        const response = await axios.get('http://localhost:9000/getPiecesOut');
+        this.piecesOut = response.data;
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
-  async getPiecesListFromBackend() {
-    $.ajax({
-      url: this.API_BASE_URL + '/getPiecesList',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        this.pieceList.forEach(function (coordinates) {
-          console.log("Piecelist erfolgreich gesetzt");
-        });
-        this.pieceList = data;
-
-      }.bind(this),
-      error: function (error) {
+    async getPiecesListFromBackend() {
+      try {
+        const response = await axios.get('http://localhost:9000/getPiecesList');
+        this.piecesList = response.data;  // Assuming the playerturn is returned in the response
+      } catch (error) {
         console.error('Error:', error);
       }
-    });
-  },
+    },
 
   async setPlayerTurnInBackend(playerturnBackend) {
     $.ajax({
@@ -715,19 +677,13 @@ methods: {
   },
 
   async setPlayeramountInBackend(playeramountBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setPlayeramount",
-      contentType: "application/json",
-      data: JSON.stringify({ playeramountBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
+    try {
+        const response = await axios.get('http://localhost:9000/getPlayeramount');
+        this.playeramount = response.data;
+      } catch (error) {
+        console.error('Error:', error);
       }
-    });
-  },
+    },
 
   setTimesPlayerRolledInBackend(timesPlayerRolledBackend) {
     $.ajax({
