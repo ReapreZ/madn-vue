@@ -650,16 +650,9 @@ methods: {
 
     async setPlayerTurnInBackend(playerturnBackend) {
   try {
-    console.log('this.playerturn vor dem Aufruf:', this.playerturn);
-    console.log('playerturnBackend vor dem Aufruf:', playerturnBackend);
-
     const response = await axios.post('http://localhost:9000/setPlayerturn', {
       playerturnBackend
     });
-
-    console.log('this.playerturn nach dem Aufruf:', this.playerturn);
-    console.log('playerturnBackend nach dem Aufruf:', playerturnBackend);
-
     console.log('Erfolgreich an das Backend gesendet:', response.data);
   } catch (error) {
     console.error('Fehler beim Senden an das Backend:', error);
