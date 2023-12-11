@@ -141,6 +141,8 @@ methods: {
     this.adjustGameBoard();
     this.addStartPlayerCircles(this.houseList);
     await this.setTimesPlayerRolledInBackend(0);
+    this.checkAndReconnect();
+    setInterval(this.adjustGameBoard(), 1000);
   },
 
   async addStartPlayerCircles(list) {
@@ -166,6 +168,44 @@ methods: {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
+  updatePiecesOnBoard() {
+      this.getPiecesListFromBackend();
+      this.removeAllPlayerCircles();
+      const maxpieces = ((this.playeramount * 4) - 1);
+      for (let i = 0; i <= maxpieces; i++) {
+        const coordinates = this.pieceList[i];
+        const pieceX = coordinates[0];
+        const pieceY = coordinates[1];
+        const cell = this.findCellByRowAndColumn(pieceX, pieceY);
+        
+        const playerIndex = Math.floor(i / 4);
+
+        this.addPlayerCircle(cell, this.playerColors[playerIndex]);
+      }
+    },
+
+    removeAllPlayerCircles() {
+      const allCoordinates = [];
+      this.fieldList.forEach(coordinates => {
+        allCoordinates.push({ x: coordinates[0], y: coordinates[1] });
+      });
+      this.houseList.forEach(coordinates => {
+        allCoordinates.push({ x: coordinates[0], y: coordinates[1] });
+      });
+      allCoordinates.forEach(coordinates => {
+        const cell = this.findCellByRowAndColumn(coordinates.x, coordinates.y);
+        this.removePlayerCircle(cell);
+      });
+    },
+
+    checkAndReconnect() {
+      if (!this.SOCKET_OPEN) {
+        //console.log("Reconnecting websocket");
+        this.connectWebsocket();
+      }
+      this.updatePiecesOnBoard();
+      this.SOCKET_TIMER = setTimeout(this.checkAndReconnect, (0,5 * 1000));
+    }, 
   createCell(className, row, column) {
     const cell = document.createElement('div');
     cell.className = className;
@@ -281,7 +321,6 @@ methods: {
     if (this.playerturn === this.playeramount - 1) {
       await this.setPlayerTurnInBackend(0);
     } else {
-      console.log("this.playerturn= " + this.playerturn)
       await this.setPlayerTurnInBackend(this.playerturn + 1);
     }
 
@@ -555,38 +594,17 @@ methods: {
 
   createGameBoard() {
     const rowsData = [[
-                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'goalp1'},{ className: 'tile' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },
-            ],
-            [
-                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },
-            ],
-            [
-                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
-            ],
-            [
-                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
-            ],
-            [
-                { className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp3' },
-            ],
-            [
-                { className: 'tile' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'tile' },
-            ],
-            [
-                { className: 'goalp2' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },
-            ],
-            [
-                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
-            ],
-            [
-                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },
-            ],
-            [
-                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },
-            ],
-            [
-                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },
-            ],
+                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'goalp1'},{ className: 'tile' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },],[
+                { className: 'housep1' },{ className: 'housep1' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },],[
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },],[
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },],[
+                { className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp1' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp3' },],[
+                { className: 'tile' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'goalp2' },{ className: 'empty' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'housep3' },{ className: 'tile' },],[
+                { className: 'goalp2' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },{ className: 'tile' },],[
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },],[
+                { className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },{ className: 'empty' },],[
+                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'tile' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },],[
+                { className: 'housep2' },{ className: 'housep2' },{ className: 'empty' },{ className: 'empty' },{ className: 'tile' },{ className: 'tile' },{ className: 'goalp4' },{ className: 'empty' },{ className: 'empty' },{ className: 'housep4' },{ className: 'housep4' },],
         ];
     rowsData.forEach((rowData, rowIndex) => {
       this.gameBoard.appendChild(this.createRow(rowData, rowIndex));
@@ -597,7 +615,6 @@ methods: {
     try {
         const response = await axios.get('http://localhost:9000/getPlayerturn');
         this.playerturn = response.data;
-        console.log(response.data + " getPlayerturn");
       } catch (error) {
         console.error('Error:', error);
       }
@@ -639,94 +656,79 @@ methods: {
       }
     },
 
-    async getPiecesListFromBackend() {
-      try {
-        const response = await axios.get('http://localhost:9000/getPiecesList');
-        this.piecesList = response.data;  // Assuming the playerturn is returned in the response
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    },
+  async getPiecesListFromBackend() {
+    try {
+      const response = await axios.get('http://localhost:9000/getPiecesList');
+      this.piecesList = response.data;  // Assuming the playerturn is returned in the response
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  },
 
-    async setPlayerTurnInBackend(playerturnBackend) {
-  try {
-    const response = await axios.post('http://localhost:9000/setPlayerturn', {
-      playerturnBackend
-    });
-    console.log('Erfolgreich an das Backend gesendet:', response.data);
-  } catch (error) {
-    console.error('Fehler beim Senden an das Backend:', error);
-  }
-},
-
+  async setPlayerTurnInBackend(playerturnBackend) {
+    try {
+      const response = await axios.post('http://localhost:9000/setPlayerturn', {
+        playerturnBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
+  },
 
   async setRolledDiceInBackend(rolledDiceBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setRolledDice",
-      contentType: "application/json",
-      data: JSON.stringify({ rolledDiceBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
-      }
-    });
+    try {
+      const response = await axios.post('http://localhost:9000/setRolledDice', {
+        rolledDiceBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
   },
 
   async setPlayeramountInBackend(playeramountBackend) {
     try {
-        const response = await axios.get('http://localhost:9000/getPlayeramount');
-        this.playeramount = response.data;
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    },
-
-  setTimesPlayerRolledInBackend(timesPlayerRolledBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setTimesPlayerRolled",
-      contentType: "application/json",
-      data: JSON.stringify({ timesPlayerRolledBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
-      }
-    });
+      const response = await axios.post('http://localhost:9000/setPlayeramount', {
+        playeramountBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
   },
 
-  setPiecesOutInBackend(pieceOutBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setPiecesOut",
-      contentType: "application/json",
-      data: JSON.stringify({ piecesOutBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
-      }
-    });
+  async setTimesPlayerRolledInBackend(timesPlayerRolledBackend) {
+    try {
+      const response = await axios.post('http://localhost:9000/setTimesPlayerRolled', {
+        timesPlayerRolledBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
+  },
+
+  async setPiecesOutInBackend(pieceOutBackend) {
+    try {
+      const response = await axios.post('http://localhost:9000/setPiecesOut', {
+        pieceOutBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
   },
 
   async setPiecesListInBackend(piecesListBackend) {
-    $.ajax({
-      type: "POST",
-      url: this.API_BASE_URL + "/setPiecesList",
-      contentType: "application/json",
-      data: JSON.stringify({ piecesListBackend }),
-      success: function (response) {
-        console.log('Erfolgreich an das Backend gesendet:', response);
-      },
-      error: function (error) {
-        console.error('Fehler beim Senden an das Backend:', error);
-      }
-    });
+    try {
+      const response = await axios.post('http://localhost:9000/setPiecesList', {
+        piecesListBackend
+      });
+      console.log('Erfolgreich an das Backend gesendet:', response.data);
+    } catch (error) {
+      console.error('Fehler beim Senden an das Backend:', error);
+    }
   },
 
   createGameInterface() {
@@ -756,12 +758,43 @@ mounted() {
    this.startButton = document.getElementById('startButton');
 
   this.openPopup();
-},
+  const socket = new WebSocket("ws://localhost:9000/websocket");
+      socket.onopen = (event) => {
+        //console.log("Socket is now open", event);
+        this.SOCKET_OPEN = true;
+      };
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        switch (message) {
+          case "playerturn":
+            this.getPlayerTurnFromBackend();
+            break;
+          case "rolledDice":
+            this.getRolledDiceFromBackend();
+            break;
+          case "timesPlayerRolled":
+            this.getTimesPlayerRolledFromBackend();
+            break;
+          case "playeramount":
+            this.getPlayeramountFromBackend();
+            break;
+          case "piecesList":
+            this.getPiecesListFromBackend();
+            this.updatePiecesOnBoard();
+            break;
+        }
+      };
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+      socket.onclose = () => {
+        //console.log("socket close");
+        this.SOCKET_OPEN = false;
+      };
+      this.socket = socket;
+    },
 };
 </script>
-
-
-
 
 <style>
 #game-board {
