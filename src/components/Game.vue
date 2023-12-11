@@ -103,6 +103,10 @@ methods: {
     console.log('Spieler 3:', this.player3Name);
     console.log('Spieler 4:', this.player4Name);
 
+    const timerId = setInterval(async () => {
+        await this.updatePiecesOnBoard();
+    }, 200);
+
     this.closePopup();
   },
 
@@ -141,8 +145,7 @@ methods: {
     this.adjustGameBoard();
     this.addStartPlayerCircles(this.houseList);
     await this.setTimesPlayerRolledInBackend(0);
-    this.checkAndReconnect();
-    setInterval(this.adjustGameBoard(), 1000);
+    //this.checkAndReconnect();
   },
 
   async addStartPlayerCircles(list) {
@@ -168,7 +171,7 @@ methods: {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
-  updatePiecesOnBoard() {
+    updatePiecesOnBoard() {
       this.getPiecesListFromBackend();
       this.removeAllPlayerCircles();
       const maxpieces = ((this.playeramount * 4) - 1);
@@ -179,7 +182,6 @@ methods: {
         const cell = this.findCellByRowAndColumn(pieceX, pieceY);
         
         const playerIndex = Math.floor(i / 4);
-
         this.addPlayerCircle(cell, this.playerColors[playerIndex]);
       }
     },
@@ -198,14 +200,10 @@ methods: {
       });
     },
 
-    checkAndReconnect() {
-      if (!this.SOCKET_OPEN) {
-        //console.log("Reconnecting websocket");
-        this.connectWebsocket();
-      }
+    /*checkAndReconnect() {
       this.updatePiecesOnBoard();
       this.SOCKET_TIMER = setTimeout(this.checkAndReconnect, (0,5 * 1000));
-    }, 
+    }, */
   createCell(className, row, column) {
     const cell = document.createElement('div');
     cell.className = className;
@@ -659,7 +657,7 @@ methods: {
   async getPiecesListFromBackend() {
     try {
       const response = await axios.get('http://localhost:9000/getPiecesList');
-      this.piecesList = response.data;  // Assuming the playerturn is returned in the response
+      this.pieceList = response.data;  // Assuming the playerturn is returned in the response
     } catch (error) {
       console.error('Error:', error);
     }
@@ -765,6 +763,7 @@ mounted() {
       };
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
+        console.log('Received WebSocket message:', message);
         switch (message) {
           case "playerturn":
             this.getPlayerTurnFromBackend();
@@ -780,7 +779,6 @@ mounted() {
             break;
           case "piecesList":
             this.getPiecesListFromBackend();
-            this.updatePiecesOnBoard();
             break;
         }
       };
