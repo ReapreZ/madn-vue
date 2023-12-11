@@ -105,7 +105,7 @@ methods: {
 
     const timerId = setInterval(async () => {
         await this.updatePiecesOnBoard();
-    }, 200);
+    }, 1000);
 
     this.closePopup();
   },
@@ -274,7 +274,7 @@ methods: {
   async movePieceOut(cell, startingTile, startingTileX, startingTileY) {
     await this.getPiecesListFromBackend();
     await this.getPlayerTurnFromBackend();
-    await this.sleep(300);
+    //await this.sleep(300);
     this.removePlayerCircle(cell);
     this.addPlayerCircle(startingTile, this.playerColors[this.playerturn]);
     const cellCoordinates = this.getCoordinatesFromCell(cell);
@@ -287,7 +287,7 @@ methods: {
   async movePiece(cell) {
     await this.getPlayerTurnFromBackend();
     await this.getPiecesListFromBackend();
-    await this.sleep(300);
+    //await this.sleep(300);
     if (cell.classList.contains('housep1') || cell.classList.contains('housep2') || cell.classList.contains('housep3') || cell.classList.contains('housep4')) {
       return false;
     }
@@ -300,7 +300,7 @@ methods: {
     if (pieceColor === currentPlayerColor) {
       const newPos = this.updateToNewPosition(piecePosIdx, cellX, cellY);
       await this.setPiecesListInBackend(this.pieceList);
-      await this.sleep(300);
+      //await this.sleep(300);
       const newPosX = newPos[0];
       const newPosY = newPos[1];
       this.removePlayerCircle(cell);
@@ -313,7 +313,7 @@ methods: {
   },
 
   async updatePlayerturn() {
-    await this.sleep(100);
+    //await this.sleep(100);
     await this.getPlayerTurnFromBackend();
     
     if (this.playerturn === this.playeramount - 1) {
@@ -322,7 +322,7 @@ methods: {
       await this.setPlayerTurnInBackend(this.playerturn + 1);
     }
 
-    await this.sleep(100);
+    //await this.sleep(100);
   },
 
   updateToNewPosition(piecePosIdx, cellX, cellY) {
@@ -344,7 +344,7 @@ methods: {
   async isOnePieceOut() {
     await this.getPiecesListFromBackend();
     await this.getPlayerTurnFromBackend();
-    await this.sleep(300);
+    //await this.sleep(300);
     const playerIdx = this.playerturn * 4;
     for (let i = playerIdx; i < playerIdx + 4; i++) {
       const piecePosX = this.pieceList[i][0];
@@ -425,7 +425,7 @@ methods: {
 
   async findEmptyHouseSlot(kickedOutPlayer) {
     await this.getPiecesListFromBackend();
-    await this.sleep(300);
+    //await this.sleep(300);
     const playerIdx = kickedOutPlayer * 4;
     for (let i = playerIdx; i < playerIdx + 4; i++) {
       const piecePosX = this.pieceList[i][0];
@@ -444,7 +444,7 @@ methods: {
     await this.getPiecesListFromBackend();
     await this.getPlayerTurnFromBackend();
     await this.getTimesPlayerRolledFromBackend();
-    await this.sleep(300);
+    //await this.sleep(300);
     const randomNumber = Math.floor(Math.random() * 6) + 1;
     const diceImage = document.querySelector('.dice-image');
     await this.setRolledDiceInBackend(randomNumber);
