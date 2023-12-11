@@ -388,7 +388,7 @@ methods: {
     dice.className = 'dice';
     const diceImage = document.createElement('img');
     diceImage.src = 'src/assets/images/magicDice.png';
-    diceImage.className = 'dice-image';
+    diceImage.className = 'magicDice-image';
 
     dice.appendChild(diceImage);
 
@@ -876,7 +876,17 @@ mounted() {
 }
 
 .dice-image {
+    position:static;
+    margin-left: 540px;
+    margin-top: 7px;
+    width: 100px;
+    height: 100px;
+}
+
+.magicDice-image {
     margin-right: 20px;
+    margin-left: 20px;
+    position:static;
     margin-top: 7px;
     width: 100px;
     height: 100px;
