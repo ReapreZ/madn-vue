@@ -6,7 +6,6 @@
                 <span class="close" @click="closePopup">&times;</span>
                 <h2>MADN Playerselection</h2>
                 <form id="player-form">
-                    <!-- Spielerinformationen und Farbauswahl für jeden Spieler -->
                     <div class="player-info">
                         <label for="player1" style="margin-right: 10px; margin-top:15px;">Player 1 :</label>
                         <input type="text" id="player1" required>
@@ -35,14 +34,10 @@
                             <div class="color-option red" onclick="selectColor('red', 'color1')"></div>
                         </div>
                     </div>
-                
-        
                     <button type="button" id="startButton" @click="startGame">Spiel starten</button>
                 </form>
             </div>
         </div>
-        
-
         <div id="game-board"></div>
     </body>
 

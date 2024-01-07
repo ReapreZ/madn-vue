@@ -30,10 +30,8 @@ export default {
   },
   methods: {
     submitFeedback() {
-      // Add your logic to handle the form submission, for example, sending feedback to the server
       console.log('Email:', this.email);
       console.log('Feedback:', this.feedback);
-      // You can make an API call or perform any other actions here
     },
   },
 };
@@ -50,7 +48,7 @@ h1.feedback-header {
 
 input[type="text"],
 select,
-textarea {
+textarea { 
   width: 100%;
   padding: 12px;
   border: 5px solid #000000;

@@ -1,4 +1,5 @@
 <template>
+  <br><br><br>
     <div class="center-container">
       <h1 class="rules-header">Game Rules</h1>
       <p class="rules-text">
